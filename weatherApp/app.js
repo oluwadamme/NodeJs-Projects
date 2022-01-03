@@ -15,7 +15,7 @@ if (!address) {
                 return console.log('Error: ', error)
             }
             console.log(location)
-            console.log('Data', forecastData)
+            console.log('Data: ', forecastData)
         })
     })
     
