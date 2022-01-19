@@ -47,7 +47,12 @@ const userSchema = mongoose.Schema({
             type: String,
             required:true
         }
-    }]
+    }],
+    avatar: {
+        type: Buffer
+    }
+},{
+    timestamps: true
 })
 
 // virtual properties are not data stored in db but are relation between two entities
@@ -82,8 +87,10 @@ userSchema.methods.toJSON = function () {
     const user = this
     const userObject = user.toObject() // to raw user data from mongoose
 
+    // this is to remove these parameters from the data response
     delete userObject.password
     delete userObject.tokens
+    delete userObject.avatar
 
     return userObject
 }
@@ -118,7 +125,7 @@ userSchema.pre('save', async function(next) {
     next()
 })
 
-// Delete user tasks when user is removed
+// Delete user's tasks when user is removed
 userSchema.pre('remove', async function (next) {
     const user = this
     await Task.deleteMany({owner: user._id})
