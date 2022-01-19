@@ -23,11 +23,33 @@ router.post('/tasks',auth,async(request, response)=>{
     }
 })
 
+// filtering our task 
+// pagination of task using limit and skip properties
+// sorting our task by timestamp
 router.get('/tasks',auth,async(req,res)=>{
+    // accepting query passed in by the user
+    const match = {}
+    const sort = {}
 
+    if (req.query.completed) {
+        // this sets completed to boolean true if the user query is true and vice versa
+        match.completed = req.query.completed === 'true'
+    }
+
+    if (req.query.sortBy) {
+        const part = req.query.sortBy.split(':') // this returns a list
+        sort[part[0]] = part[1] === 'desc' ? -1 : 1
+    }
     try {
         //const tasks = await Task.find({owner:req.user._id})
-        await req.user.populate('tasks').execPopulate()
+        await req.user.populate({
+            path:'tasks', match, 
+            options:{
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip),
+                sort
+            }
+        }).execPopulate()
         res.send(req.user.tasks)
     } catch (error) {
         res.status(500).send(error.message)

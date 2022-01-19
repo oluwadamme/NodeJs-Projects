@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // This model is use for validation
-const Task = mongoose.model('Task',{
+const taskSchema = new mongoose.Schema({
     description: {
         type: String,
         required: true,
@@ -16,6 +16,9 @@ const Task = mongoose.model('Task',{
         required: true,
         ref: 'User' // this is the same as the one used in creating the user model for mongoose
     }
+}, {
+    timestamps: true
 })
+const Task = mongoose.model('Task', taskSchema)
 
 module.exports = Task
